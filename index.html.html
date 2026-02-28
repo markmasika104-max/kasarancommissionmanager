@@ -1,0 +1,2790 @@
+```html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BOWMAN INSURANCE AGENCY - Commission Manager</title>
+    <meta charset="UTF-8">
+    <!-- Add required libraries for PDF and Excel export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        body {
+            background: #f5f5f5;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        header {
+            background: linear-gradient(135deg, #0033A0, #0052CC);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .logo-placeholder {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #FFD700, #D4AF37);
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #0033A0;
+            font-weight: bold;
+            font-size: 10px;
+            text-align: center;
+            border: 2px solid white;
+        }
+        .login-screen {
+            padding: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        button {
+            padding: 10px 15px;
+            background: #0033A0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #0052CC;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        button.gold {
+            background: #FFD700;
+            color: #0033A0;
+        }
+        button.gold:hover {
+            background: #D4AF37;
+            color: white;
+        }
+        button.blue {
+            background: #0033A0;
+            color: white;
+        }
+        button.blue:hover {
+            background: #0052CC;
+        }
+        button.danger {
+            background: #e74c3c;
+        }
+        button.warning {
+            background: #f39c12;
+        }
+        button.info {
+            background: #3498db;
+        }
+        button.secondary {
+            background: #95a5a6;
+        }
+        .demo-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border-left: 4px solid #FFD700;
+        }
+        .hidden {
+            display: none;
+        }
+        .tabs {
+            display: flex;
+            background: #002966;
+            flex-wrap: wrap;
+        }
+        .tab {
+            flex: 1;
+            padding: 15px;
+            background: #002966;
+            color: white;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            min-width: 120px;
+            transition: all 0.3s ease;
+        }
+        .tab:hover {
+            background: #0033A0;
+        }
+        .tab.active {
+            background: #FFD700;
+            color: #0033A0;
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .card {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #0033A0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .card.gold {
+            border-left-color: #FFD700;
+        }
+        .card.blue {
+            border-left-color: #0033A0;
+        }
+        .card.commission {
+            border-left-color: #27ae60;
+        }
+        .card.expense {
+            border-left-color: #e74c3c;
+        }
+        .card.product {
+            border-left-color: #9b59b6;
+        }
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+        }
+        .grid-4 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #f8f9fa;
+            font-weight: bold;
+            color: #0033A0;
+        }
+        .user-info {
+            background: #ecf0f1;
+            padding: 10px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .admin-panel {
+            background: linear-gradient(135deg, #FFD700, #D4AF37);
+            color: #0033A0;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .commission-badge {
+            background: #27ae60;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .expense-badge {
+            background: #e74c3c;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .product-badge {
+            background: #9b59b6;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .client-badge {
+            background: #3498db;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .new-client-badge {
+            background: #FFD700;
+            color: #0033A0;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .renewal-badge {
+            background: #0033A0;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .export-buttons {
+            margin: 15px 0;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .edit-form {
+            background: #fff3cd;
+            border-left: 4px solid #FFD700;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .search-box {
+            margin: 15px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .commission-summary-card {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .commission-chart {
+            display: flex;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+            background: #ddd;
+        }
+        .commission-chart-segment {
+            height: 100%;
+        }
+        .progress-bar {
+            height: 20px;
+            background: #ecf0f1;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: #27ae60;
+            transition: width 0.3s ease;
+        }
+        .product-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .product-category-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #0033A0;
+            text-align: center;
+        }
+        .product-category-card.gold {
+            border-color: #FFD700;
+        }
+        .product-subcategory {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            border-left: 3px solid #9b59b6;
+        }
+        .commission-breakdown {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #27ae60;
+        }
+        .tax-breakdown {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .tax-item {
+            flex: 1;
+            text-align: center;
+            padding: 10px;
+        }
+        .tax-badge {
+            background: #8e44ad;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .daily-earnings-card {
+            background: linear-gradient(135deg, #FFD700, #D4AF37);
+            color: #0033A0;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .weekly-earnings-card {
+            background: linear-gradient(135deg, #0033A0, #0052CC);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .monthly-earnings-card {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .yearly-earnings-card {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .new-client-indicator {
+            position: relative;
+        }
+        .new-client-indicator::after {
+            content: "NEW";
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #FFD700;
+            color: #0033A0;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+            .product-categories {
+                grid-template-columns: 1fr;
+            }
+            .tax-breakdown {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="container">
+        <header>
+            <div class="logo-container">
+                <div class="logo-placeholder">
+                    BOWMAN<br>INSURANCE
+                </div>
+                <h1>Commission Manager</h1>
+                <p>Professional Insurance Agency Portal</p>
+            </div>
+        </header>
+
+        <div class="login-screen">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" value="admin">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" value="bowman2025">
+            </div>
+            
+            <button onclick="attemptLogin()">LOGIN NOW</button>
+            
+            <div class="demo-info">
+                <p><strong>Username:</strong> admin</p>
+                <p><strong>Password:</strong> bowman2025</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="container hidden">
+        <header>
+            <div class="logo-container">
+                <div class="logo-placeholder">
+                    BOWMAN<br>INSURANCE
+                </div>
+                <h1>Commission Manager</h1>
+                <div class="user-info">
+                    Welcome, <strong id="currentUser">User</strong> | 
+                    <button onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </header>
+
+        <div class="admin-panel">
+            <strong>Administrator Mode</strong> - Full access to all agency data
+        </div>
+
+        <!-- Tabs Navigation -->
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('dashboard')">Dashboard</button>
+            <button class="tab" onclick="showTab('clients')">Clients</button>
+            <button class="tab" onclick="showTab('commissions')">Commissions</button>
+            <button class="tab" onclick="showTab('products')">Products</button>
+            <button class="tab" onclick="showTab('expenses')">Expenses</button>
+            <button class="tab" onclick="showTab('dailyEarnings')">Daily Earnings</button>
+            <button class="tab" onclick="showTab('reports')">Reports</button>
+            <button class="tab" onclick="showTab('admin')">Admin</button>
+        </div>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <h2>Agency Overview</h2>
+            
+            <div class="grid-4">
+                <div class="card gold">
+                    <h3>Total Commissions</h3>
+                    <p style="font-size: 24px; color: #0033A0;" id="totalCommissions">Ksh 0</p>
+                </div>
+                <div class="card blue">
+                    <h3>Active Clients</h3>
+                    <p style="font-size: 24px; color: white;" id="activeClients">0</p>
+                </div>
+                <div class="card">
+                    <h3>New Clients Today</h3>
+                    <p style="font-size: 24px;" id="newClientsToday">0</p>
+                </div>
+                <div class="card commission">
+                    <h3>Commission Rate</h3>
+                    <p style="font-size: 24px;" id="commissionRate">10%</p>
+                </div>
+                <div class="card">
+                    <h3>Daily Commissions</h3>
+                    <p style="font-size: 20px; color: #27ae60;" id="dailyCommissions">Ksh 0</p>
+                </div>
+                <div class="card">
+                    <h3>Weekly Commissions</h3>
+                    <p style="font-size: 20px; color: #0033A0;" id="weeklyCommissions">Ksh 0</p>
+                </div>
+                <div class="card">
+                    <h3>Monthly Commissions</h3>
+                    <p style="font-size: 20px; color: #27ae60;" id="monthlyCommissions">Ksh 0</p>
+                </div>
+                <div class="card">
+                    <h3>Yearly Commissions</h3>
+                    <p style="font-size: 20px; color: #e74c3c;" id="yearlyCommissions">Ksh 0</p>
+                </div>
+            </div>
+
+            <!-- Commission Summary -->
+            <div class="card commission-summary-card">
+                <h3>Commission Performance Summary</h3>
+                <div class="grid-3">
+                    <div>
+                        <h4>Today</h4>
+                        <p style="font-size: 24px;" id="todayCommissions">Ksh 0</p>
+                        <p>Earnings</p>
+                    </div>
+                    <div>
+                        <h4>This Week</h4>
+                        <p style="font-size: 24px;" id="weekCommissions">Ksh 0</p>
+                        <p>Earnings</p>
+                    </div>
+                    <div>
+                        <h4>This Month</h4>
+                        <p style="font-size: 24px;" id="monthCommissions">Ksh 0</p>
+                        <p>Earnings</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Recent Commissions</h3>
+                <div id="recentCommissions">
+                    <p>No commissions recorded yet. Start by adding clients and recording commissions.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>New Clients Today</h3>
+                <div id="newClientsList">
+                    <p>No new clients added today.</p>
+                </div>
+            </div>
+
+            <div class="card gold">
+                <h3>Quick Actions</h3>
+                <button class="gold" onclick="addSampleData()">Add Sample Data</button>
+                <button class="blue" onclick="exportData()">Export Data</button>
+                <button onclick="location.reload()">Refresh</button>
+            </div>
+        </div>
+
+        <!-- CLIENTS TAB -->
+        <div id="clients" class="tab-content">
+            <h2>Client Management</h2>
+            
+            <!-- Edit Client Form -->
+            <div id="editClientForm" class="edit-form hidden">
+                <div class="form-header">
+                    <h3>Edit Client</h3>
+                    <button class="secondary" onclick="cancelEditClient()">Cancel</button>
+                </div>
+                <input type="hidden" id="editClientId">
+                <input type="text" id="editClientName" placeholder="Client Full Name">
+                <input type="tel" id="editClientPhone" placeholder="Phone Number">
+                <input type="email" id="editClientEmail" placeholder="Email">
+                <select id="editClientType">
+                    <option value="new">New Client</option>
+                    <option value="renewal">Renewal</option>
+                </select>
+                <button class="blue" onclick="updateClient()">Update Client</button>
+            </div>
+            
+            <div class="card">
+                <h3>Add New Client</h3>
+                <div class="grid-2">
+                    <div>
+                        <label>Client Name</label>
+                        <input type="text" id="clientName" placeholder="Full Name">
+                    </div>
+                    <div>
+                        <label>Phone Number</label>
+                        <input type="tel" id="clientPhone" placeholder="Phone">
+                    </div>
+                    <div>
+                        <label>Email Address</label>
+                        <input type="email" id="clientEmail" placeholder="Email">
+                    </div>
+                    <div>
+                        <label>Client Type</label>
+                        <select id="clientType">
+                            <option value="new">New Client</option>
+                            <option value="renewal">Renewal</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="blue" onclick="addClient()">Add Client</button>
+            </div>
+
+            <div class="card">
+                <h3>All Clients</h3>
+                <div class="search-box">
+                    <input type="text" id="clientSearch" placeholder="Search clients by name, phone, or email..." onkeyup="filterClients()">
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Type</th>
+                            <th>Join Date</th>
+                            <th>Total Premium</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientsList">
+                        <tr><td colspan="7">No clients yet</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- COMMISSIONS TAB -->
+        <div id="commissions" class="tab-content">
+            <h2>Commission Records</h2>
+            
+            <!-- Edit Commission Form -->
+            <div id="editCommissionForm" class="edit-form hidden">
+                <div class="form-header">
+                    <h3>Edit Commission</h3>
+                    <button class="secondary" onclick="cancelEditCommission()">Cancel</button>
+                </div>
+                <input type="hidden" id="editCommissionId">
+                <select id="editCommissionClient">
+                    <option value="">Select Client</option>
+                </select>
+                <select id="editCommissionProduct">
+                    <option value="">Select Product</option>
+                </select>
+                <div class="grid-2">
+                    <div>
+                        <label>Premium Received (Ksh)</label>
+                        <input type="number" id="editPremiumReceived" placeholder="Amount from client">
+                    </div>
+                    <div>
+                        <label>Premium Paid (Ksh)</label>
+                        <input type="number" id="editPremiumPaid" placeholder="Amount to insurance">
+                    </div>
+                </div>
+                <div class="commission-breakdown" id="editCommissionBreakdown">
+                    <h4>Commission Calculation</h4>
+                    <p>Gross Commission: <span id="editGrossCommission">Ksh 0</span></p>
+                    <p>Withholding Tax (10%): <span id="editTaxAmount">Ksh 0</span></p>
+                    <p><strong>Net Commission: <span id="editNetCommission">Ksh 0</span></strong></p>
+                </div>
+                <input type="date" id="editCommissionDate">
+                <textarea id="editCommissionNotes" placeholder="Policy details, vehicle info, etc." rows="2"></textarea>
+                <button class="blue" onclick="updateCommission()">Update Commission</button>
+            </div>
+            
+            <div class="card">
+                <h3>Record Commission</h3>
+                <div class="grid-2">
+                    <div>
+                        <label>Client</label>
+                        <select id="commissionClient" onchange="calculateCommission()">
+                            <option value="">Select Client</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Product</label>
+                        <select id="commissionProduct" onchange="calculateCommission()">
+                            <option value="">Select Product</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Premium Received (Ksh)</label>
+                        <input type="number" id="premiumReceived" placeholder="Amount from client" oninput="calculateCommission()">
+                    </div>
+                    <div>
+                        <label>Premium Paid (Ksh)</label>
+                        <input type="number" id="premiumPaid" placeholder="Amount to insurance" oninput="calculateCommission()">
+                    </div>
+                </div>
+                
+                <div class="commission-breakdown">
+                    <h4>Commission Calculation</h4>
+                    <div class="grid-3">
+                        <div>
+                            <p><strong>Gross Commission</strong></p>
+                            <p id="grossCommission">Ksh 0</p>
+                        </div>
+                        <div>
+                            <p><strong>Withholding Tax (10%)</strong></p>
+                            <p id="taxAmount">Ksh 0</p>
+                        </div>
+                        <div>
+                            <p><strong>Net Commission</strong></p>
+                            <p style="font-size: 18px; font-weight: bold; color: #27ae60;" id="netCommission">Ksh 0</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <input type="date" id="commissionDate">
+                <textarea id="commissionNotes" placeholder="Policy details, vehicle info, etc." rows="2"></textarea>
+                <button class="gold" onclick="addCommission()">Record Commission</button>
+            </div>
+
+            <div class="card">
+                <h3>Commission History</h3>
+                <div class="search-box">
+                    <input type="text" id="commissionSearch" placeholder="Search commissions..." onkeyup="filterCommissions()">
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Client</th>
+                            <th>Product</th>
+                            <th>Premium Received</th>
+                            <th>Premium Paid</th>
+                            <th>Net Commission</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="commissionsList">
+                        <tr><td colspan="7">No commissions yet</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- PRODUCTS TAB -->
+        <div id="products" class="tab-content">
+            <h2>Products Management</h2>
+            
+            <!-- Edit Product Form -->
+            <div id="editProductForm" class="edit-form hidden">
+                <div class="form-header">
+                    <h3>Edit Product</h3>
+                    <button class="secondary" onclick="cancelEditProduct()">Cancel</button>
+                </div>
+                <input type="hidden" id="editProductId">
+                <input type="text" id="editProductName" placeholder="Product Name">
+                <select id="editProductCategory">
+                    <option value="third_party">Third-Party</option>
+                    <option value="comprehensive">Comprehensive</option>
+                    <option value="tor">Time On Risk (TOR)</option>
+                </select>
+                <input type="text" id="editProductSubcategory" placeholder="Subcategory (e.g., Private Vehicles)">
+                <textarea id="editProductDescription" placeholder="Product description" rows="2"></textarea>
+                <button class="blue" onclick="updateProduct()">Update Product</button>
+            </div>
+            
+            <div class="card">
+                <h3>Add New Product</h3>
+                <div class="grid-2">
+                    <div>
+                        <label>Product Name</label>
+                        <input type="text" id="productName" placeholder="Product Name">
+                    </div>
+                    <div>
+                        <label>Category</label>
+                        <select id="productCategory">
+                            <option value="third_party">Third-Party</option>
+                            <option value="comprehensive">Comprehensive</option>
+                            <option value="tor">Time On Risk (TOR)</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Subcategory</label>
+                        <input type="text" id="productSubcategory" placeholder="e.g., Private Vehicles">
+                    </div>
+                    <div>
+                        <label>Default Commission Rate (%)</label>
+                        <input type="number" id="productCommissionRate" value="10" min="0" max="100">
+                    </div>
+                </div>
+                <textarea id="productDescription" placeholder="Product description" rows="2"></textarea>
+                <button class="blue" onclick="addProduct()">Add Product</button>
+            </div>
+
+            <div class="card">
+                <h3>Product Categories</h3>
+                <div class="product-categories">
+                    <div class="product-category-card">
+                        <h4>Third-Party</h4>
+                        <div id="thirdPartyProducts">
+                            <p>No products in this category</p>
+                        </div>
+                    </div>
+                    <div class="product-category-card">
+                        <h4>Comprehensive</h4>
+                        <div id="comprehensiveProducts">
+                            <p>No products in this category</p>
+                        </div>
+                    </div>
+                    <div class="product-category-card gold">
+                        <h4>Time On Risk (TOR)</h4>
+                        <div id="torProducts">
+                            <p>No products in this category</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>All Products</h3>
+                <div class="search-box">
+                    <input type="text" id="productSearch" placeholder="Search products..." onkeyup="filterProducts()">
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Subcategory</th>
+                            <th>Commission Rate</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsList">
+                        <tr><td colspan="5">No products yet</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- EXPENSES TAB -->
+        <div id="expenses" class="tab-content">
+            <h2>Expenses Management</h2>
+            
+            <!-- Edit Expense Form -->
+            <div id="editExpenseForm" class="edit-form hidden">
+                <div class="form-header">
+                    <h3>Edit Expense</h3>
+                    <button class="secondary" onclick="cancelEditExpense()">Cancel</button>
+                </div>
+                <input type="hidden" id="editExpenseId">
+                <input type="date" id="editExpenseDate">
+                <input type="text" id="editExpenseDescription" placeholder="Expense Description">
+                <select id="editExpenseCategory">
+                    <option value="office">Office Supplies</option>
+                    <option value="marketing">Marketing</option>
+                    <option value="utilities">Utilities</option>
+                    <option value="transport">Transport</option>
+                    <option value="staff">Staff Costs</option>
+                    <option value="other">Other</option>
+                </select>
+                <input type="number" id="editExpenseAmount" placeholder="Amount in Ksh">
+                <textarea id="editExpenseNotes" placeholder="Expense details" rows="2"></textarea>
+                <button class="blue" onclick="updateExpense()">Update Expense</button>
+            </div>
+            
+            <div class="card">
+                <h3>Record Expense</h3>
+                <div class="grid-2">
+                    <div>
+                        <label>Expense Date</label>
+                        <input type="date" id="expenseDate">
+                    </div>
+                    <div>
+                        <label>Description</label>
+                        <input type="text" id="expenseDescription" placeholder="Expense Description">
+                    </div>
+                    <div>
+                        <label>Category</label>
+                        <select id="expenseCategory">
+                            <option value="office">Office Supplies</option>
+                            <option value="marketing">Marketing</option>
+                            <option value="utilities">Utilities</option>
+                            <option value="transport">Transport</option>
+                            <option value="staff">Staff Costs</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>Amount (Ksh)</label>
+                        <input type="number" id="expenseAmount" placeholder="Amount">
+                    </div>
+                </div>
+                <textarea id="expenseNotes" placeholder="Expense details" rows="2"></textarea>
+                <button class="blue" onclick="addExpense()">Record Expense</button>
+            </div>
+
+            <div class="card">
+                <h3>Expenses History</h3>
+                <div class="search-box">
+                    <input type="text" id="expenseSearch" placeholder="Search expenses..." onkeyup="filterExpenses()">
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="expensesList">
+                        <tr><td colspan="5">No expenses yet</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- DAILY EARNINGS TAB -->
+        <div id="dailyEarnings" class="tab-content">
+            <h2>Daily Earnings Report</h2>
+            
+            <div class="grid-4">
+                <div class="daily-earnings-card">
+                    <h3>Today</h3>
+                    <p style="font-size: 24px;" id="todayEarnings">Ksh 0</p>
+                    <p>Daily Commissions</p>
+                </div>
+                <div class="weekly-earnings-card">
+                    <h3>This Week</h3>
+                    <p style="font-size: 24px;" id="weekEarnings">Ksh 0</p>
+                    <p>Weekly Commissions</p>
+                </div>
+                <div class="monthly-earnings-card">
+                    <h3>This Month</h3>
+                    <p style="font-size: 24px;" id="monthEarnings">Ksh 0</p>
+                    <p>Monthly Commissions</p>
+                </div>
+                <div class="yearly-earnings-card">
+                    <h3>This Year</h3>
+                    <p style="font-size: 24px;" id="yearEarnings">Ksh 0</p>
+                    <p>Yearly Commissions</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Daily Earnings Parameters</h3>
+                <div class="grid-3">
+                    <div>
+                        <label>Start Date</label>
+                        <input type="date" id="startDate" value="2025-01-01">
+                    </div>
+                    <div>
+                        <label>Target Daily Commission (Ksh)</label>
+                        <input type="number" id="targetDailyCommission" value="10000" min="1">
+                    </div>
+                    <div>
+                        <label>Withholding Tax Rate (%)</label>
+                        <input type="number" id="taxRate" value="10" min="0" max="100">
+                    </div>
+                </div>
+                <button class="gold" onclick="saveEarningsParameters()">Save Parameters</button>
+            </div>
+
+            <div class="card">
+                <h3>Daily Earnings Report</h3>
+                <div class="export-buttons">
+                    <button class="gold" onclick="generateDailyEarningsReport()">Generate Report</button>
+                    <button class="blue" onclick="exportDailyEarningsToPDF()">Export to PDF</button>
+                    <button class="blue" onclick="exportDailyEarningsToExcel()">Export to Excel</button>
+                </div>
+                
+                <div id="dailyEarningsReportOutput">
+                    <p>Set your parameters and generate the report</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Commission Performance by Product</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Today</th>
+                            <th>This Week</th>
+                            <th>This Month</th>
+                            <th>This Year</th>
+                            <th>Total Commissions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productPerformance">
+                        <tr><td colspan="6">No commission data available</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Reports Tab -->
+        <div id="reports" class="tab-content">
+            <h2>Financial Reports</h2>
+            
+            <div class="card">
+                <h3>Generate Reports</h3>
+                <button class="blue" onclick="showClientReport()">Client Statements</button>
+                <button class="blue" onclick="showAgencyReport()">Agency Financial Report</button>
+                <button class="blue" onclick="showCommissionReport()">Commission Report</button>
+                <button class="blue" onclick="showNewClientsReport()">New Clients Report</button>
+                <button class="blue" onclick="showProductPerformanceReport()">Product Performance</button>
+                <button class="blue" onclick="showExpensesReport()">Expenses Report</button>
+                <button class="blue" onclick="showTaxReport()">Tax Report</button>
+                <button class="gold" onclick="showDailyEarningsReport()">Daily Earnings Report</button>
+                
+                <div class="export-buttons">
+                    <button class="gold" onclick="exportCurrentReportToPDF()">Download Current Report as PDF</button>
+                    <button class="gold" onclick="exportCurrentReportToExcel()">Download Current Report as Excel</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div id="reportOutput">
+                    <p>Select a report to generate financial information</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Tab -->
+        <div id="admin" class="tab-content">
+            <h2>Administrator Functions</h2>
+            
+            <div class="card">
+                <h3>User Management</h3>
+                <div class="grid-2">
+                    <div>
+                        <h4>Add New User</h4>
+                        <input type="text" id="newUsername" placeholder="Username">
+                        <input type="password" id="newPassword" placeholder="Password">
+                        <select id="userRole">
+                            <option value="admin">Administrator</option>
+                            <option value="agent">Insurance Agent</option>
+                            <option value="viewer">Viewer</option>
+                        </select>
+                        <button class="blue" onclick="addUser()">Add User</button>
+                    </div>
+                    <div>
+                        <h4>Current Users</h4>
+                        <div id="usersList">
+                            <p>admin (Administrator)</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Data Management</h3>
+                <button class="blue" onclick="exportData()">Export Data to File</button>
+                <button class="blue" onclick="importData()">Import Data from File</button>
+                <button class="danger" onclick="clearAllData()">Clear All Data</button>
+            </div>
+
+            <div class="card">
+                <h3>System Settings</h3>
+                <div class="grid-2">
+                    <div>
+                        <label>Default Commission Rate (%)</label>
+                        <input type="number" id="defaultCommissionRate" value="10" min="0" max="100">
+                    </div>
+                    <div>
+                        <label>Withholding Tax Rate (%)</label>
+                        <input type="number" id="defaultTaxRate" value="10" min="0" max="100">
+                    </div>
+                </div>
+                <button class="gold" onclick="saveSystemSettings()">Save Settings</button>
+            </div>
+
+            <div class="card">
+                <h3>System Information</h3>
+                <p><strong>Total Clients:</strong> <span id="sysClients">0</span></p>
+                <p><strong>Total Commissions:</strong> <span id="sysCommissions">0</span></p>
+                <p><strong>Total Products:</strong> <span id="sysProducts">0</span></p>
+                <p><strong>Total Expenses:</strong> <span id="sysExpenses">0</span></p>
+                <p><strong>App Version:</strong> 1.0 (Bowman Insurance Agency)</p>
+                <p><strong>Last Backup:</strong> <span id="lastBackup">Never</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== SIMPLE LOGIN SYSTEM =====
+        function attemptLogin() {
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            
+            if (username === "admin" && password === "bowman2025") {
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('hidden');
+                document.getElementById('currentUser').textContent = username;
+                
+                // Initialize the app
+                initializeApp();
+            } else {
+                alert("Login failed! Try:\nUsername: admin\nPassword: bowman2025");
+            }
+        }
+
+        function logout() {
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+        }
+
+        // ===== APPLICATION DATA =====
+        let appData = {
+            clients: [],
+            commissions: [],
+            products: [],
+            expenses: [],
+            users: [{username: "admin", password: "bowman2025", role: "admin"}],
+            settings: {
+                commissionRate: 10,
+                taxRate: 10
+            }
+        };
+
+        // Track current report type for export
+        let currentReportType = null;
+
+        // ===== TAB SYSTEM =====
+        function showTab(tabName) {
+            // Hide all tabs
+            var contents = document.getElementsByClassName('tab-content');
+            for (var i = 0; i < contents.length; i++) {
+                contents[i].classList.remove('active');
+            }
+            
+            // Remove active from all tab buttons
+            var tabs = document.getElementsByClassName('tab');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.remove('active');
+            }
+            
+            // Show selected tab and activate button
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Refresh data if needed
+            if (tabName === 'clients') refreshClients();
+            if (tabName === 'commissions') refreshCommissions();
+            if (tabName === 'products') refreshProducts();
+            if (tabName === 'expenses') refreshExpenses();
+            if (tabName === 'dailyEarnings') generateDailyEarningsReport();
+            if (tabName === 'admin') updateSystemInfo();
+        }
+
+        // ===== APP INITIALIZATION =====
+        function initializeApp() {
+            loadData();
+            checkFirstTimeLoad();
+            refreshClients();
+            refreshCommissions();
+            refreshProducts();
+            refreshExpenses();
+            updateDashboard();
+            updateSystemInfo();
+            
+            // Set today's date as default
+            var today = new Date().toISOString().split('T')[0];
+            document.getElementById('commissionDate').value = today;
+            document.getElementById('expenseDate').value = today;
+        }
+
+        // ===== CLIENT MANAGEMENT =====
+        function addClient() {
+            var name = document.getElementById('clientName').value;
+            var phone = document.getElementById('clientPhone').value;
+            var email = document.getElementById('clientEmail').value;
+            var type = document.getElementById('clientType').value;
+            
+            if (!name || !phone) {
+                alert('Please enter client name and phone number');
+                return;
+            }
+            
+            var newClient = {
+                id: Date.now(),
+                name: name,
+                phone: phone,
+                email: email,
+                type: type,
+                joinDate: new Date().toISOString().split('T')[0],
+                policies: []
+            };
+            
+            appData.clients.push(newClient);
+            saveData();
+            refreshClients();
+            updateDashboard();
+            
+            // Clear form
+            document.getElementById('clientName').value = '';
+            document.getElementById('clientPhone').value = '';
+            document.getElementById('clientEmail').value = '';
+            
+            alert('Client added: ' + name);
+        }
+
+        function refreshClients() {
+            var tbody = document.getElementById('clientsList');
+            var clientSelect = document.getElementById('commissionClient');
+            var editClientSelect = document.getElementById('editCommissionClient');
+            
+            if (appData.clients.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7">No clients yet</td></tr>';
+                clientSelect.innerHTML = '<option value="">Select Client</option>';
+                editClientSelect.innerHTML = '<option value="">Select Client</option>';
+                return;
+            }
+            
+            var html = '';
+            var clientOptions = '<option value="">Select Client</option>';
+            var editClientOptions = '<option value="">Select Client</option>';
+            
+            appData.clients.forEach(function(client) {
+                var totalPremium = calculateClientTotalPremium(client.id);
+                
+                var typeBadge = client.type === 'new' ? 
+                    '<span class="new-client-badge">New</span>' : 
+                    '<span class="renewal-badge">Renewal</span>';
+                
+                html += '<tr>';
+                html += '<td><strong>' + client.name + '</strong></td>';
+                html += '<td>' + client.phone + '</td>';
+                html += '<td>' + (client.email || '-') + '</td>';
+                html += '<td>' + typeBadge + '</td>';
+                html += '<td>' + client.joinDate + '</td>';
+                html += '<td>Ksh ' + totalPremium.toLocaleString() + '</td>';
+                html += '<td>';
+                html += '<button onclick="viewClient(' + client.id + ')">View</button>';
+                html += '<button class="warning" onclick="editClient(' + client.id + ')">Edit</button>';
+                html += '<button class="danger" onclick="deleteClient(' + client.id + ')">Delete</button>';
+                html += '</td>';
+                html += '</tr>';
+                
+                clientOptions += '<option value="' + client.id + '">' + client.name + '</option>';
+                editClientOptions += '<option value="' + client.id + '">' + client.name + '</option>';
+            });
+            
+            tbody.innerHTML = html;
+            clientSelect.innerHTML = clientOptions;
+            editClientSelect.innerHTML = editClientOptions;
+        }
+
+        function calculateClientTotalPremium(clientId) {
+            var clientCommissions = appData.commissions.filter(c => c.clientId === clientId);
+            return clientCommissions.reduce((sum, c) => sum + c.premiumReceived, 0);
+        }
+
+        // ===== COMMISSION CALCULATION =====
+        function calculateCommission() {
+            var premiumReceived = parseFloat(document.getElementById('premiumReceived').value) || 0;
+            var premiumPaid = parseFloat(document.getElementById('premiumPaid').value) || 0;
+            var taxRate = appData.settings.taxRate || 10;
+            
+            var grossCommission = premiumReceived - premiumPaid;
+            var taxAmount = grossCommission * (taxRate / 100);
+            var netCommission = grossCommission - taxAmount;
+            
+            document.getElementById('grossCommission').textContent = 'Ksh ' + grossCommission.toLocaleString();
+            document.getElementById('taxAmount').textContent = 'Ksh ' + taxAmount.toLocaleString();
+            document.getElementById('netCommission').textContent = 'Ksh ' + netCommission.toLocaleString();
+        }
+
+        function addCommission() {
+            var clientId = document.getElementById('commissionClient').value;
+            var productId = document.getElementById('commissionProduct').value;
+            var premiumReceived = document.getElementById('premiumReceived').value;
+            var premiumPaid = document.getElementById('premiumPaid').value;
+            var date = document.getElementById('commissionDate').value;
+            var notes = document.getElementById('commissionNotes').value;
+            
+            if (!clientId || !productId || !premiumReceived || !premiumPaid || !date) {
+                alert('Please fill all required fields');
+                return;
+            }
+            
+            var premiumReceivedNum = parseFloat(premiumReceived);
+            var premiumPaidNum = parseFloat(premiumPaid);
+            var taxRate = appData.settings.taxRate || 10;
+            
+            var grossCommission = premiumReceivedNum - premiumPaidNum;
+            var taxAmount = grossCommission * (taxRate / 100);
+            var netCommission = grossCommission - taxAmount;
+            
+            var newCommission = {
+                id: Date.now(),
+                clientId: parseInt(clientId),
+                productId: parseInt(productId),
+                premiumReceived: premiumReceivedNum,
+                premiumPaid: premiumPaidNum,
+                grossCommission: grossCommission,
+                taxAmount: taxAmount,
+                netCommission: netCommission,
+                date: date,
+                notes: notes
+            };
+            
+            appData.commissions.push(newCommission);
+            saveData();
+            refreshCommissions();
+            updateDashboard();
+            
+            // Clear form
+            document.getElementById('premiumReceived').value = '';
+            document.getElementById('premiumPaid').value = '';
+            document.getElementById('commissionNotes').value = '';
+            
+            alert('Commission recorded successfully! Net Commission: Ksh ' + netCommission.toLocaleString());
+        }
+
+        function refreshCommissions() {
+            var tbody = document.getElementById('commissionsList');
+            
+            if (appData.commissions.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7">No commissions yet</td></tr>';
+                return;
+            }
+            
+            var html = '';
+            
+            // Sort by date (newest first)
+            var sortedCommissions = [...appData.commissions].sort((a, b) => 
+                new Date(b.date) - new Date(a.date)
+            );
+            
+            sortedCommissions.forEach(function(commission) {
+                var client = appData.clients.find(c => c.id === commission.clientId);
+                var product = appData.products.find(p => p.id === commission.productId);
+                
+                html += '<tr>';
+                html += '<td>' + commission.date + '</td>';
+                html += '<td>' + (client ? client.name : 'Unknown') + '</td>';
+                html += '<td>' + (product ? product.name : 'Unknown') + '</td>';
+                html += '<td>Ksh ' + commission.premiumReceived.toLocaleString() + '</td>';
+                html += '<td>Ksh ' + commission.premiumPaid.toLocaleString() + '</td>';
+                html += '<td><span class="commission-badge">Ksh ' + commission.netCommission.toLocaleString() + '</span></td>';
+                html += '<td>';
+                html += '<button class="warning" onclick="editCommission(' + commission.id + ')">Edit</button>';
+                html += '<button class="danger" onclick="deleteCommission(' + commission.id + ')">Delete</button>';
+                html += '</td>';
+                html += '</tr>';
+            });
+            
+            tbody.innerHTML = html;
+        }
+
+        // ===== PRODUCT MANAGEMENT =====
+        function addProduct() {
+            var name = document.getElementById('productName').value;
+            var category = document.getElementById('productCategory').value;
+            var subcategory = document.getElementById('productSubcategory').value;
+            var commissionRate = document.getElementById('productCommissionRate').value;
+            var description = document.getElementById('productDescription').value;
+            
+            if (!name || !category || !subcategory) {
+                alert('Please fill all required fields');
+                return;
+            }
+            
+            var newProduct = {
+                id: Date.now(),
+                name: name,
+                category: category,
+                subcategory: subcategory,
+                commissionRate: parseFloat(commissionRate),
+                description: description,
+                createdDate: new Date().toISOString().split('T')[0]
+            };
+            
+            appData.products.push(newProduct);
+            saveData();
+            refreshProducts();
+            
+            // Clear form
+            document.getElementById('productName').value = '';
+            document.getElementById('productSubcategory').value = '';
+            document.getElementById('productDescription').value = '';
+            
+            alert('Product added: ' + name);
+        }
+
+        function refreshProducts() {
+            var thirdPartyDiv = document.getElementById('thirdPartyProducts');
+            var comprehensiveDiv = document.getElementById('comprehensiveProducts');
+            var torDiv = document.getElementById('torProducts');
+            var tbody = document.getElementById('productsList');
+            var productSelect = document.getElementById('commissionProduct');
+            var editProductSelect = document.getElementById('editCommissionProduct');
+            
+            // Clear previous content
+            thirdPartyDiv.innerHTML = '<p>No products in this category</p>';
+            comprehensiveDiv.innerHTML = '<p>No products in this category</p>';
+            torDiv.innerHTML = '<p>No products in this category</p>';
+            
+            if (appData.products.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5">No products yet</td></tr>';
+                productSelect.innerHTML = '<option value="">Select Product</option>';
+                editProductSelect.innerHTML = '<option value="">Select Product</option>';
+                return;
+            }
+            
+            var thirdPartyHtml = '';
+            var comprehensiveHtml = '';
+            var torHtml = '';
+            var tableHtml = '';
+            var productOptions = '<option value="">Select Product</option>';
+            var editProductOptions = '<option value="">Select Product</option>';
+            
+            // Categorize products
+            appData.products.forEach(function(product) {
+                var productHtml = '<div class="product-subcategory">';
+                productHtml += '<strong>' + product.name + '</strong><br>';
+                productHtml += '<small>' + product.subcategory + '</small><br>';
+                productHtml += '<small>Commission: ' + product.commissionRate + '%</small>';
+                productHtml += '</div>';
+                
+                if (product.category === 'third_party') {
+                    thirdPartyHtml += productHtml;
+                } else if (product.category === 'comprehensive') {
+                    comprehensiveHtml += productHtml;
+                } else if (product.category === 'tor') {
+                    torHtml += productHtml;
+                }
+                
+                // Add to table
+                tableHtml += '<tr>';
+                tableHtml += '<td>' + product.name + '</td>';
+                tableHtml += '<td>' + formatCategoryName(product.category) + '</td>';
+                tableHtml += '<td>' + product.subcategory + '</td>';
+                tableHtml += '<td>' + product.commissionRate + '%</td>';
+                tableHtml += '<td>';
+                tableHtml += '<button class="warning" onclick="editProduct(' + product.id + ')">Edit</button>';
+                tableHtml += '<button class="danger" onclick="deleteProduct(' + product.id + ')">Delete</button>';
+                tableHtml += '</td>';
+                tableHtml += '</tr>';
+                
+                // Add to select options
+                productOptions += '<option value="' + product.id + '">' + product.name + ' (' + product.subcategory + ')</option>';
+                editProductOptions += '<option value="' + product.id + '">' + product.name + ' (' + product.subcategory + ')</option>';
+            });
+            
+            // Update category divs
+            if (thirdPartyHtml) thirdPartyDiv.innerHTML = thirdPartyHtml;
+            if (comprehensiveHtml) comprehensiveDiv.innerHTML = comprehensiveHtml;
+            if (torHtml) torDiv.innerHTML = torHtml;
+            
+            tbody.innerHTML = tableHtml;
+            productSelect.innerHTML = productOptions;
+            editProductSelect.innerHTML = editProductOptions;
+        }
+
+        function formatCategoryName(category) {
+            switch(category) {
+                case 'third_party': return 'Third-Party';
+                case 'comprehensive': return 'Comprehensive';
+                case 'tor': return 'Time On Risk';
+                default: return category;
+            }
+        }
+
+        // ===== EXPENSES MANAGEMENT =====
+        function addExpense() {
+            var date = document.getElementById('expenseDate').value;
+            var description = document.getElementById('expenseDescription').value;
+            var category = document.getElementById('expenseCategory').value;
+            var amount = document.getElementById('expenseAmount').value;
+            var notes = document.getElementById('expenseNotes').value;
+            
+            if (!date || !description || !amount) {
+                alert('Please fill all required fields');
+                return;
+            }
+            
+            var newExpense = {
+                id: Date.now(),
+                date: date,
+                description: description,
+                category: category,
+                amount: parseFloat(amount),
+                notes: notes
+            };
+            
+            appData.expenses.push(newExpense);
+            saveData();
+            refreshExpenses();
+            updateDashboard();
+            
+            // Clear form
+            document.getElementById('expenseDescription').value = '';
+            document.getElementById('expenseAmount').value = '';
+            document.getElementById('expenseNotes').value = '';
+            
+            alert('Expense recorded successfully!');
+        }
+
+        function refreshExpenses() {
+            var tbody = document.getElementById('expensesList');
+            
+            if (appData.expenses.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5">No expenses yet</td></tr>';
+                return;
+            }
+            
+            var html = '';
+            
+            // Sort by date (newest first)
+            var sortedExpenses = [...appData.expenses].sort((a, b) => 
+                new Date(b.date) - new Date(a.date)
+            );
+            
+            sortedExpenses.forEach(function(expense) {
+                html += '<tr>';
+                html += '<td>' + expense.date + '</td>';
+                html += '<td>' + expense.description + '</td>';
+                html += '<td>' + expense.category + '</td>';
+                html += '<td>Ksh ' + expense.amount.toLocaleString() + '</td>';
+                html += '<td>';
+                html += '<button class="warning" onclick="editExpense(' + expense.id + ')">Edit</button>';
+                html += '<button class="danger" onclick="deleteExpense(' + expense.id + ')">Delete</button>';
+                html += '</td>';
+                html += '</tr>';
+            });
+            
+            tbody.innerHTML = html;
+        }
+
+        function editExpense(expenseId) {
+            var expense = appData.expenses.find(e => e.id === expenseId);
+            if (!expense) return;
+            
+            // Populate edit form
+            document.getElementById('editExpenseId').value = expense.id;
+            document.getElementById('editExpenseDate').value = expense.date;
+            document.getElementById('editExpenseDescription').value = expense.description;
+            document.getElementById('editExpenseCategory').value = expense.category;
+            document.getElementById('editExpenseAmount').value = expense.amount;
+            document.getElementById('editExpenseNotes').value = expense.notes || '';
+            
+            // Show edit form
+            document.getElementById('editExpenseForm').classList.remove('hidden');
+            document.getElementById('editExpenseForm').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function updateExpense() {
+            var expenseId = parseInt(document.getElementById('editExpenseId').value);
+            var date = document.getElementById('editExpenseDate').value;
+            var description = document.getElementById('editExpenseDescription').value;
+            var category = document.getElementById('editExpenseCategory').value;
+            var amount = document.getElementById('editExpenseAmount').value;
+            var notes = document.getElementById('editExpenseNotes').value;
+            
+            if (!date || !description || !amount) {
+                alert('Please fill all required fields');
+                return;
+            }
+            
+            var expense = appData.expenses.find(e => e.id === expenseId);
+            if (expense) {
+                expense.date = date;
+                expense.description = description;
+                expense.category = category;
+                expense.amount = parseFloat(amount);
+                expense.notes = notes;
+                
+                saveData();
+                refreshExpenses();
+                updateDashboard();
+                
+                // Hide edit form
+                document.getElementById('editExpenseForm').classList.add('hidden');
+                
+                alert('Expense updated successfully!');
+            }
+        }
+
+        function cancelEditExpense() {
+            document.getElementById('editExpenseForm').classList.add('hidden');
+        }
+
+        function deleteExpense(expenseId) {
+            if (!confirm('Are you sure you want to delete this expense?')) return;
+            
+            appData.expenses = appData.expenses.filter(e => e.id !== expenseId);
+            saveData();
+            refreshExpenses();
+            updateDashboard();
+            alert('Expense deleted!');
+        }
+
+        // ===== DAILY EARNINGS REPORT =====
+        function generateDailyEarningsReport() {
+            var output = document.getElementById('dailyEarningsReportOutput');
+            var today = new Date();
+            var todayStr = today.toISOString().split('T')[0];
+            
+            // Calculate earnings for different periods
+            var todayEarnings = calculateEarningsForDate(todayStr);
+            var weekEarnings = calculateEarningsForWeek(today);
+            var monthEarnings = calculateEarningsForMonth(today);
+            var yearEarnings = calculateEarningsForYear(today);
+            
+            // Update summary cards
+            document.getElementById('todayEarnings').textContent = 'Ksh ' + todayEarnings.toLocaleString();
+            document.getElementById('weekEarnings').textContent = 'Ksh ' + weekEarnings.toLocaleString();
+            document.getElementById('monthEarnings').textContent = 'Ksh ' + monthEarnings.toLocaleString();
+            document.getElementById('yearEarnings').textContent = 'Ksh ' + yearEarnings.toLocaleString();
+            
+            var html = '<h4>Daily Earnings Analysis</h4>';
+            html += '<div class="grid-4">';
+            html += '<div class="card">';
+            html += '<h5>Today</h5>';
+            html += '<p style="font-size: 18px;">Ksh ' + todayEarnings.toLocaleString() + '</p>';
+            html += '<p>' + getTodayCommissionsCount() + ' transactions</p>';
+            html += '</div>';
+            
+            html += '<div class="card">';
+            html += '<h5>This Week</h5>';
+            html += '<p style="font-size: 18px;">Ksh ' + weekEarnings.toLocaleString() + '</p>';
+            html += '<p>Average: Ksh ' + (weekEarnings / 7).toFixed(0).toLocaleString() + '/day</p>';
+            html += '</div>';
+            
+            html += '<div class="card">';
+            html += '<h5>This Month</h5>';
+            html += '<p style="font-size: 18px;">Ksh ' + monthEarnings.toLocaleString() + '</p>';
+            html += '<p>' + today.getDate() + ' days of ' + getMonthName(today.getMonth()) + '</p>';
+            html += '</div>';
+            
+            html += '<div class="card">';
+            html += '<h5>This Year</h5>';
+            html += '<p style="font-size: 18px;">Ksh ' + yearEarnings.toLocaleString() + '</p>';
+            html += '<p>' + (today.getMonth() + 1) + ' months of ' + today.getFullYear() + '</p>';
+            html += '</div>';
+            html += '</div>';
+            
+            // Product performance
+            html += '<h4 style="margin-top: 20px;">Product Performance</h4>';
+            var productPerformance = calculateProductPerformance();
+            var productHtml = '';
+            
+            productPerformance.forEach(function(product) {
+                productHtml += '<div class="card" style="margin-bottom: 10px;">';
+                productHtml += '<h5>' + product.name + ' (' + product.subcategory + ')</h5>';
+                productHtml += '<div class="grid-4">';
+                productHtml += '<div><strong>Today:</strong><br>Ksh ' + product.today.toLocaleString() + '</div>';
+                productHtml += '<div><strong>This Week:</strong><br>Ksh ' + product.week.toLocaleString() + '</div>';
+                productHtml += '<div><strong>This Month:</strong><br>Ksh ' + product.month.toLocaleString() + '</div>';
+                productHtml += '<div><strong>This Year:</strong><br>Ksh ' + product.year.toLocaleString() + '</div>';
+                productHtml += '</div>';
+                productHtml += '</div>';
+            });
+            
+            html += productHtml;
+            output.innerHTML = html;
+            
+            // Update product performance table
+            updateProductPerformanceTable();
+        }
+
+        function calculateEarningsForDate(dateStr) {
+            var dayCommissions = appData.commissions.filter(c => c.date === dateStr);
+            return dayCommissions.reduce((sum, c) => sum + c.netCommission, 0);
+        }
+
+        function calculateEarningsForWeek(date) {
+            var weekStart = new Date(date);
+            weekStart.setDate(date.getDate() - date.getDay());
+            var weekEnd = new Date(date);
+            weekEnd.setDate(date.getDate() + (6 - date.getDay()));
+            
+            var weekCommissions = appData.commissions.filter(c => {
+                var commissionDate = new Date(c.date);
+                return commissionDate >= weekStart && commissionDate <= weekEnd;
+            });
+            
+            return weekCommissions.reduce((sum, c) => sum + c.netCommission, 0);
+        }
+
+        function calculateEarningsForMonth(date) {
+            var month = date.getMonth();
+            var year = date.getFullYear();
+            
+            var monthCommissions = appData.commissions.filter(c => {
+                var commissionDate = new Date(c.date);
+                return commissionDate.getMonth() === month && commissionDate.getFullYear() === year;
+            });
+            
+            return monthCommissions.reduce((sum, c) => sum + c.netCommission, 0);
+        }
+
+        function calculateEarningsForYear(date) {
+            var year = date.getFullYear();
+            
+            var yearCommissions = appData.commissions.filter(c => {
+                var commissionDate = new Date(c.date);
+                return commissionDate.getFullYear() === year;
+            });
+            
+            return yearCommissions.reduce((sum, c) => sum + c.netCommission, 0);
+        }
+
+        function calculateProductPerformance() {
+            var performance = [];
+            var today = new Date().toISOString().split('T')[0];
+            
+            appData.products.forEach(function(product) {
+                var productCommissions = appData.commissions.filter(c => c.productId === product.id);
+                
+                var todayCommissions = productCommissions.filter(c => c.date === today);
+                var weekCommissions = productCommissions.filter(c => {
+                    var commissionDate = new Date(c.date);
+                    var weekStart = new Date();
+                    weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+                    var weekEnd = new Date();
+                    weekEnd.setDate(weekEnd.getDate() + (6 - weekEnd.getDay()));
+                    return commissionDate >= weekStart && commissionDate <= weekEnd;
+                });
+                
+                var monthCommissions = productCommissions.filter(c => {
+                    var commissionDate = new Date(c.date);
+                    var today = new Date();
+                    return commissionDate.getMonth() === today.getMonth() && 
+                           commissionDate.getFullYear() === today.getFullYear();
+                });
+                
+                var yearCommissions = productCommissions.filter(c => {
+                    var commissionDate = new Date(c.date);
+                    return commissionDate.getFullYear() === new Date().getFullYear();
+                });
+                
+                performance.push({
+                    name: product.name,
+                    subcategory: product.subcategory,
+                    today: todayCommissions.reduce((sum, c) => sum + c.netCommission, 0),
+                    week: weekCommissions.reduce((sum, c) => sum + c.netCommission, 0),
+                    month: monthCommissions.reduce((sum, c) => sum + c.netCommission, 0),
+                    year: yearCommissions.reduce((sum, c) => sum + c.netCommission, 0),
+                    total: productCommissions.reduce((sum, c) => sum + c.netCommission, 0)
+                });
+            });
+            
+            return performance;
+        }
+
+        function updateProductPerformanceTable() {
+            var tbody = document.getElementById('productPerformance');
+            var performance = calculateProductPerformance();
+            
+            if (performance.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6">No commission data available</td></tr>';
+                return;
+            }
+            
+            var html = '';
+            performance.forEach(function(product) {
+                html += '<tr>';
+                html += '<td>' + product.name + ' (' + product.subcategory + ')</td>';
+                html += '<td>Ksh ' + product.today.toLocaleString() + '</td>';
+                html += '<td>Ksh ' + product.week.toLocaleString() + '</td>';
+                html += '<td>Ksh ' + product.month.toLocaleString() + '</td>';
+                html += '<td>Ksh ' + product.year.toLocaleString() + '</td>';
+                html += '<td>Ksh ' + product.total.toLocaleString() + '</td>';
+                html += '</tr>';
+            });
+            
+            tbody.innerHTML = html;
+        }
+
+        // ===== DASHBOARD FUNCTIONS =====
+        function updateDashboard() {
+            var totalCommissions = appData.commissions.reduce((sum, c) => sum + c.netCommission, 0);
+            var activeClients = appData.clients.length;
+            
+            // Calculate new clients today
+            var today = new Date().toISOString().split('T')[0];
+            var newClientsToday = appData.clients.filter(c => c.joinDate === today).length;
+            
+            // Calculate daily, weekly, monthly, yearly commissions
+            var dailyCommissions = calculateEarningsForDate(today);
+            var weeklyCommissions = calculateEarningsForWeek(new Date());
+            var monthlyCommissions = calculateEarningsForMonth(new Date());
+            var yearlyCommissions = calculateEarningsForYear(new Date());
+            
+            document.getElementById('totalCommissions').textContent = 'Ksh ' + totalCommissions.toLocaleString();
+            document.getElementById('activeClients').textContent = activeClients;
+            document.getElementById('newClientsToday').textContent = newClientsToday;
+            document.getElementById('dailyCommissions').textContent = 'Ksh ' + dailyCommissions.toLocaleString();
+            document.getElementById('weeklyCommissions').textContent = 'Ksh ' + weeklyCommissions.toLocaleString();
+            document.getElementById('monthlyCommissions').textContent = 'Ksh ' + monthlyCommissions.toLocaleString();
+            document.getElementById('yearlyCommissions').textContent = 'Ksh ' + yearlyCommissions.toLocaleString();
+            document.getElementById('commissionRate').textContent = appData.settings.commissionRate + '%';
+            
+            // Update today's commissions
+            document.getElementById('todayCommissions').textContent = 'Ksh ' + dailyCommissions.toLocaleString();
+            document.getElementById('weekCommissions').textContent = 'Ksh ' + weeklyCommissions.toLocaleString();
+            document.getElementById('monthCommissions').textContent = 'Ksh ' + monthlyCommissions.toLocaleString();
+            
+            // Update recent commissions
+            updateRecentCommissions();
+            
+            // Update new clients list
+            updateNewClientsList();
+        }
+
+        function updateRecentCommissions() {
+            var container = document.getElementById('recentCommissions');
+            
+            if (appData.commissions.length === 0) {
+                container.innerHTML = '<p>No commissions recorded yet</p>';
+                return;
+            }
+            
+            var html = '<table><thead><tr><th>Date</th><th>Client</th><th>Product</th><th>Net Commission</th></tr></thead><tbody>';
+            
+            // Sort by date (newest first) and get top 5
+            var sortedCommissions = [...appData.commissions].sort((a, b) => 
+                new Date(b.date) - new Date(a.date)
+            ).slice(0, 5);
+            
+            sortedCommissions.forEach(function(commission) {
+                var client = appData.clients.find(c => c.id === commission.clientId);
+                var product = appData.products.find(p => p.id === commission.productId);
+                
+                html += '<tr>';
+                html += '<td>' + commission.date + '</td>';
+                html += '<td>' + (client ? client.name : 'Unknown') + '</td>';
+                html += '<td>' + (product ? product.name : 'Unknown') + '</td>';
+                html += '<td><span class="commission-badge">Ksh ' + commission.netCommission.toLocaleString() + '</span></td>';
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function updateNewClientsList() {
+            var container = document.getElementById('newClientsList');
+            var today = new Date().toISOString().split('T')[0];
+            var newClients = appData.clients.filter(c => c.joinDate === today);
+            
+            if (newClients.length === 0) {
+                container.innerHTML = '<p>No new clients added today.</p>';
+                return;
+            }
+            
+            var html = '<div class="grid-3">';
+            newClients.forEach(function(client) {
+                html += '<div class="card" style="border-left-color: #FFD700;">';
+                html += '<h5>' + client.name + '</h5>';
+                html += '<p>' + client.phone + '</p>';
+                html += '<p><small>' + client.type.toUpperCase() + ' CLIENT</small></p>';
+                html += '</div>';
+            });
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        // ===== REPORT FUNCTIONS =====
+        function showClientReport() {
+            currentReportType = 'client';
+            var output = document.getElementById('reportOutput');
+            var html = '<h3>Client Statements Report</h3>';
+            
+            appData.clients.forEach(function(client) {
+                var clientCommissions = appData.commissions.filter(c => c.clientId === client.id);
+                var totalCommissions = clientCommissions.reduce((sum, c) => sum + c.netCommission, 0);
+                var totalPremium = clientCommissions.reduce((sum, c) => sum + c.premiumReceived, 0);
+                
+                html += '<div class="card">';
+                html += '<h4>' + client.name + ' (' + client.type.toUpperCase() + ')</h4>';
+                html += '<p><strong>Phone:</strong> ' + client.phone + '</p>';
+                html += '<p><strong>Email:</strong> ' + (client.email || 'Not provided') + '</p>';
+                html += '<p><strong>Join Date:</strong> ' + client.joinDate + '</p>';
+                html += '<p><strong>Total Premium:</strong> Ksh ' + totalPremium.toLocaleString() + '</p>';
+                html += '<p><strong>Total Commission Generated:</strong> Ksh ' + totalCommissions.toLocaleString() + '</p>';
+                
+                if (clientCommissions.length > 0) {
+                    html += '<h5>Recent Policies:</h5>';
+                    html += '<ul>';
+                    clientCommissions.slice(0, 3).forEach(function(commission) {
+                        var product = appData.products.find(p => p.id === commission.productId);
+                        html += '<li>' + commission.date + ': ' + (product ? product.name : 'Unknown') + 
+                               ' - Ksh ' + commission.premiumReceived.toLocaleString() + 
+                               ' (Net Commission: Ksh ' + commission.netCommission.toLocaleString() + ')</li>';
+                    });
+                    if (clientCommissions.length > 3) {
+                        html += '<li>... and ' + (clientCommissions.length - 3) + ' more policies</li>';
+                    }
+                    html += '</ul>';
+                }
+                html += '</div>';
+            });
+            
+            output.innerHTML = html;
+        }
+
+        function showAgencyReport() {
+            currentReportType = 'agency';
+            var output = document.getElementById('reportOutput');
+            var totalCommissions = appData.commissions.reduce((sum, c) => sum + c.netCommission, 0);
+            var totalExpenses = appData.expenses.reduce((sum, e) => sum + e.amount, 0);
+            var netProfit = totalCommissions - totalExpenses;
+            var newClients = appData.clients.filter(c => c.type === 'new').length;
+            var renewalClients = appData.clients.filter(c => c.type === 'renewal').length;
+            
+            var html = '<h3>Agency Financial Report</h3>';
+            html += '<div class="grid-4">';
+            html += '<div class="card commission">';
+            html += '<h4>Total Commissions</h4>';
+            html += '<p style="font-size: 24px;">Ksh ' + totalCommissions.toLocaleString() + '</p>';
+            html += '<p>All Time</p>';
+            html += '</div>';
+            
+            html += '<div class="card expense">';
+            html += '<h4>Total Expenses</h4>';
+            html += '<p style="font-size: 24px;">Ksh ' + totalExpenses.toLocaleString() + '</p>';
+            html += '<p>All Time</p>';
+            html += '</div>';
+            
+            html += '<div class="card gold">';
+            html += '<h4>Net Profit</h4>';
+            html += '<p style="font-size: 24px;">Ksh ' + netProfit.toLocaleString() + '</p>';
+            html += '<p>All Time</p>';
+            html += '</div>';
+            
+            html += '<div class="card blue">';
+            html += '<h4>Active Clients</h4>';
+            html += '<p style="font-size: 24px;">' + appData.clients.length + '</p>';
+            html += '<p>New: ' + newClients + ' | Renewals: ' + renewalClients + '</p>';
+            html += '</div>';
+            html += '</div>';
+            
+            html += '<div class="card">';
+            html += '<h4>Monthly Performance</h4>';
+            var monthlyPerformance = calculateMonthlyPerformance();
+            html += '<table><thead><tr><th>Month</th><th>New Clients</th><th>Commissions</th><th>Expenses</th><th>Net Profit</th></tr></thead><tbody>';
+            
+            monthlyPerformance.forEach(function(month) {
+                html += '<tr>';
+                html += '<td>' + month.name + ' ' + month.year + '</td>';
+                html += '<td>' + month.newClients + '</td>';
+                html += '<td>Ksh ' + month.commissions.toLocaleString() + '</td>';
+                html += '<td>Ksh ' + month.expenses.toLocaleString() + '</td>';
+                html += '<td>Ksh ' + month.profit.toLocaleString() + '</td>';
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            html += '</div>';
+            
+            output.innerHTML = html;
+        }
+
+        function calculateMonthlyPerformance() {
+            var performance = [];
+            var currentDate = new Date();
+            
+            // Get last 6 months
+            for (var i = 5; i >= 0; i--) {
+                var date = new Date();
+                date.setMonth(currentDate.getMonth() - i);
+                var month = date.getMonth();
+                var year = date.getFullYear();
+                var monthName = getMonthName(month);
+                
+                // Calculate new clients for this month
+                var monthClients = appData.clients.filter(c => {
+                    var joinDate = new Date(c.joinDate);
+                    return joinDate.getMonth() === month && 
+                           joinDate.getFullYear() === year &&
+                           c.type === 'new';
+                });
+                
+                // Calculate commissions for this month
+                var monthCommissions = appData.commissions.filter(c => {
+                    var commissionDate = new Date(c.date);
+                    return commissionDate.getMonth() === month && 
+                           commissionDate.getFullYear() === year;
+                });
+                var monthCommissionTotal = monthCommissions.reduce((sum, c) => sum + c.netCommission, 0);
+                
+                // Calculate expenses for this month
+                var monthExpenses = appData.expenses.filter(e => {
+                    var expenseDate = new Date(e.date);
+                    return expenseDate.getMonth() === month && 
+                           expenseDate.getFullYear() === year;
+                });
+                var monthExpenseTotal = monthExpenses.reduce((sum, e) => sum + e.amount, 0);
+                
+                performance.push({
+                    name: monthName,
+                    year: year,
+                    newClients: monthClients.length,
+                    commissions: monthCommissionTotal,
+                    expenses: monthExpenseTotal,
+                    profit: monthCommissionTotal - monthExpenseTotal
+                });
+            }
+            
+            return performance;
+        }
+
+        function showCommissionReport() {
+            currentReportType = 'commission';
+            var output = document.getElementById('reportOutput');
+            var html = '<h3>Commission Report</h3>';
+            
+            if (appData.commissions.length === 0) {
+                html += '<div class="card"><p>No commission records available.</p></div>';
+                output.innerHTML = html;
+                return;
+            }
+            
+            // Summary cards
+            var totalCommissions = appData.commissions.reduce((sum, c) => sum + c.netCommission, 0);
+            var totalTax = appData.commissions.reduce((sum, c) => sum + c.taxAmount, 0);
+            var totalGrossCommission = appData.commissions.reduce((sum, c) => sum + c.grossCommission, 0);
+            
+            html += '<div class="grid-3">';
+            html += '<div class="card commission">';
+            html += '<h4>Total Net Commission</h4>';
+            html += '<p style="font-size: 24px;">Ksh ' + totalCommissions.toLocaleString() + '</p>';
+            html += '<p>After 10% tax</p>';
+            html += '</div>';
+            
+            html += '<div class="card">';
+            html += '<h4>Total Tax Withheld</h4>';
+            html += '<p style="font-size: 24px; color: #8e44ad;">Ksh ' + totalTax.toLocaleString() + '</p>';
+            html += '<p>10% withholding tax</p>';
+            html += '</div>';
+            
+            html += '<div class="card">';
+            html += '<h4>Total Gross Commission</h4>';
+            html += '<p style="font-size: 24px;">Ksh ' + totalGrossCommission.toLocaleString() + '</p>';
+            html += '<p>Before tax deduction</p>';
+            html += '</div>';
+            html += '</div>';
+            
+            // Commission details table
+            html += '<div class="card">';
+            html += '<h4>Commission Details</h4>';
+            html += '<table><thead><tr><th>Date</th><th>Client</th><th>Product</th><th>Premium Received</th><th>Premium Paid</th><th>Gross Commission</th><th>Tax (10%)</th><th>Net Commission</th></tr></thead><tbody>';
+            
+            var sortedCommissions = [...appData.commissions].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            sortedCommissions.forEach(function(commission) {
+                var client = appData.clients.find(c => c.id === commission.clientId);
+                var product = appData.products.find(p => p.id === commission.productId);
+                
+                html += '<tr>';
+                html += '<td>' + commission.date + '</td>';
+                html += '<td>' + (client ? client.name : 'Unknown') + '</td>';
+                html += '<td>' + (product ? product.name : 'Unknown') + '</td>';
+                html += '<td>Ksh ' + commission.premiumReceived.toLocaleString() + '</td>';
+                html += '<td>Ksh ' + commission.premiumPaid.toLocaleString() + '</td>';
+                html += '<td>Ksh ' + commission.grossCommission.toLocaleString() + '</td>';
+                html += '<td><span class="tax-badge">Ksh ' + commission.taxAmount.toLocaleString() + '</span></td>';
+                html += '<td><span class="commission-badge">Ksh ' + commission.netCommission.toLocaleString() + '</span></td>';
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            html += '</div>';
+            
+            // Commission by product category
+            html += '<div class="card">';
+            html += '<h4>Commission by Product Category</h4>';
+            
+            var commissionsByCategory = {};
+            appData.commissions.forEach(function(commission) {
+                var product = appData.products.find(p => p.id === commission.productId);
+                if (product) {
+                    if (!commissionsByCategory[product.category]) {
+                        commissionsByCategory[product.category] = 0;
+                    }
+                    commissionsByCategory[product.category] += commission.netCommission;
+                }
+            });
+            
+            html += '<table><thead><tr><th>Category</th><th>Net Commission</th><th>Percentage</th></tr></thead><tbody>';
+            
+            for (var category in commissionsByCategory) {
+                var percentage = totalCommissions > 0 ? ((commissionsByCategory[category] / totalCommissions) * 100).toFixed(1) : 0;
+                html += '<tr>';
+                html += '<td>' + formatCategoryName(category) + '</td>';
+                html += '<td>Ksh ' + commissionsByCategory[category].toLocaleString() + '</td>';
+                html += '<td>' + percentage + '%</td>';
+                html += '</tr>';
+            }
+            
+            html += '</tbody></table>';
+            html += '</div>';
+            
+            output.innerHTML = html;
+        }
+
+        function showNewClientsReport() {
+            currentReportType = 'newClients';
+            var output = document.getElementById('reportOutput');
+            var html = '<h3>New Clients Report</h3>';
+            
+            var newClients = appData.clients.filter(c => c.type === 'new');
+            var renewalClients = appData.clients.filter(c => c.type === 'renewal');
+            
+            html += '<div class="grid-4">';
+            html += '<div class="card">';
+            html += '<h4>Total New Clients</h4>';
+            html += '<p style="font-size: 24px;">' + newClients.length + '</p>';
+            html += '<p>All Time</p>';
+            html += '</div>';
+            
+            html += '<div class="card">';
+            html += '<h4>Total Renewal Clients</h4>';
+            html += '<p style="font-size: 24px;">' + renewalClients.length + '</p>';
+            html += '<p>All Time</p>';
+            html += '</div>';
+            
+            html += '<div class="card">';
+            html += '<h4>Total Active Clients</h4>';
+            html += '<p style="font-size: 24px;">' + appData.clients.length + '</p>';
+            html += '<p>All Clients</p>';
+            html += '</div>';
+            
+            html += '<div class="card">';
+            html += '<h4>Conversion Rate</h4>';
+            html += '<p style="font-size: 24px;">' + (appData.clients.length > 0 ? Math.round((newClients.length / appData.clients.length) * 100) : 0) + '%</p>';
+            html += '<p>New vs Total</p>';
+            html += '</div>';
+            html += '</div>';
+            
+            // New clients today
+            var today = new Date().toISOString().split('T')[0];
+            var newClientsToday = newClients.filter(c => c.joinDate === today);
+            
+            html += '<div class="card gold">';
+            html += '<h4>New Clients Today (' + today + ')</h4>';
+            if (newClientsToday.length > 0) {
+                html += '<table><thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Time Added</th></tr></thead><tbody>';
+                newClientsToday.forEach(function(client) {
+                    html += '<tr>';
+                    html += '<td>' + client.name + '</td>';
+                    html += '<td>' + client.phone + '</td>';
+                    html += '<td>' + (client.email || '-') + '</td>';
+                    html += '<td>' + client.joinDate + '</td>';
+                    html += '</tr>';
+                });
+                html += '</tbody></table>';
+            } else {
+                html += '<p>No new clients added today.</p>';
+            }
+            html += '</div>';
+            
+            // All new clients
+            html += '<div class="card">';
+            html += '<h4>All New Clients</h4>';
+            html += '<table><thead><tr><th>Name</th><th>Phone</th><th>Email</th><th>Join Date</th><th>Total Premium</th><th>Commission Generated</th></tr></thead><tbody>';
+            
+            newClients.forEach(function(client) {
+                var clientCommissions = appData.commissions.filter(c => c.clientId === client.id);
+                var totalPremium = clientCommissions.reduce((sum, c) => sum + c.premiumReceived, 0);
+                var totalCommission = clientCommissions.reduce((sum, c) => sum + c.netCommission, 0);
+                
+                html += '<tr>';
+                html += '<td>' + client.name + '</td>';
+                html += '<td>' + client.phone + '</td>';
+                html += '<td>' + (client.email || '-') + '</td>';
+                html += '<td>' + client.joinDate + '</td>';
+                html += '<td>Ksh ' + totalPremium.toLocaleString() + '</td>';
+                html += '<td>Ksh ' + totalCommission.toLocaleString() + '</td>';
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            html += '</div>';
+            
+            output.innerHTML = html;
+        }
+
+        function showProductPerformanceReport() {
+            currentReportType = 'productPerformance';
+            var output = document.getElementById('reportOutput');
+            var html = '<h3>Product Performance Report</h3>';
+            
+            if (appData.products.length === 0) {
+                html += '<div class="card"><p>No products available.</p></div>';
+                output.innerHTML = html;
+                return;
+            }
+            
+            var productPerformance = calculateProductPerformance();
+            
+            html += '<div class="card">';
+            html += '<h4>Product Commission Summary</h4>';
+            html += '<table><thead><tr><th>Product</th><th>Category</th><th>Subcategory</th><th>Total Commission</th><th>Number of Sales</th><th>Average Commission</th></tr></thead><tbody>';
+            
+            productPerformance.forEach(function(product) {
+                var productData = appData.products.find(p => p.name === product.name);
+                var salesCount = appData.commissions.filter(c => {
+                    var prod = appData.products.find(p => p.id === c.productId);
+                    return prod && prod.name === product.name;
+                }).length;
+                var avgCommission = salesCount > 0 ? product.total / salesCount : 0;
+                
+                html += '<tr>';
+                html += '<td>' + product.name + '</td>';
+                html += '<td>' + formatCategoryName(productData.category) + '</td>';
+                html += '<td>' + product.subcategory + '</td>';
+                html += '<td>Ksh ' + product.total.toLocaleString() + '</td>';
+                html += '<td>' + salesCount + '</td>';
+                html += '<td>Ksh ' + avgCommission.toFixed(0).toLocaleString() + '</td>';
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            html += '</div>';
+            
+            output.innerHTML = html;
+        }
+
+        function showExpensesReport() {
+            currentReportType = 'expenses';
+            var output = document.getElementById('reportOutput');
+            var html = '<h3>Expenses Report</h3>';
+            
+            if (appData.expenses.length === 0) {
+                html += '<div class="card"><p>No expenses recorded yet.</p></div>';
+                output.innerHTML = html;
+                return;
+            }
+            
+            var totalExpenses = appData.expenses.reduce((sum, e) => sum + e.amount, 0);
+            var today = new Date().toISOString().split('T')[0];
+            var todayExpenses = appData.expenses.filter(e => e.date === today).reduce((sum, e) => sum + e.amount, 0);
+            
+            html += '<div class="grid-4">';
+            html += '<div class="card expense">';
+            html += '<h4>Total Expenses</h4>';
+            html += '<p style="font-size: 24px;">Ksh ' + totalExpenses.toLocaleString() + '</p>';
+            html += '<p>All Time</p>';
+            html += '</div>';
+            
+            html += '<div class="card">';
+            html += '<h4>Today\'s Expenses</h4>';
+            html += '<p style="font-size: 24px;">Ksh ' + todayExpenses.toLocaleString() + '</p>';
+            html += '<p>' + appData.expenses.filter(e => e.date === today).length + ' items</p>';
+            html += '</div>';
+            
+            html += '<div class="card">';
+            html += '<h4>Average Daily Expense</h4>';
+            var uniqueDates = [...new Set(appData.expenses.map(e => e.date))];
+            var avgDaily = uniqueDates.length > 0 ? totalExpenses / uniqueDates.length : 0;
+            html += '<p style="font-size: 24px;">Ksh ' + avgDaily.toFixed(0).toLocaleString() + '</p>';
+            html += '<p>' + uniqueDates.length + ' days tracked</p>';
+            html += '</div>';
+            
+            html += '<div class="card">';
+            html += '<h4>Expense Ratio</h4>';
+            var totalCommissions = appData.commissions.reduce((sum, c) => sum + c.netCommission, 0);
+            var expenseRatio = totalCommissions > 0 ? (totalExpenses / totalCommissions * 100).toFixed(1) : 0;
+            html += '<p style="font-size: 24px;">' + expenseRatio + '%</p>';
+            html += '<p>Expenses vs Commissions</p>';
+            html += '</div>';
+            html += '</div>';
+            
+            // Expenses by category
+            html += '<div class="card">';
+            html += '<h4>Expenses by Category</h4>';
+            
+            var expensesByCategory = {};
+            appData.expenses.forEach(function(expense) {
+                if (!expensesByCategory[expense.category]) {
+                    expensesByCategory[expense.category] = 0;
+                }
+                expensesByCategory[expense.category] += expense.amount;
+            });
+            
+            html += '<table><thead><tr><th>Category</th><th>Amount</th><th>Percentage</th><th>Average per Item</th></tr></thead><tbody>';
+            
+            for (var category in expensesByCategory) {
+                var categoryExpenses = appData.expenses.filter(e => e.category === category);
+                var percentage = totalExpenses > 0 ? ((expensesByCategory[category] / totalExpenses) * 100).toFixed(1) : 0;
+                var avgPerItem = categoryExpenses.length > 0 ? expensesByCategory[category] / categoryExpenses.length : 0;
+                
+                html += '<tr>';
+                html += '<td>' + category.charAt(0).toUpperCase() + category.slice(1) + '</td>';
+                html += '<td>Ksh ' + expensesByCategory[category].toLocaleString() + '</td>';
+                html += '<td>' + percentage + '%</td>';
+                html += '<td>Ksh ' + avgPerItem.toFixed(0).toLocaleString() + '</td>';
+                html += '</tr>';
+            }
+            
+            html += '</tbody></table>';
+            html += '</div>';
+            
+            // Recent expenses
+            html += '<div class="card">';
+            html += '<h4>Recent Expenses</h4>';
+            html += '<table><thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Amount</th></tr></thead><tbody>';
+            
+            var recentExpenses = [...appData.expenses].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
+            recentExpenses.forEach(function(expense) {
+                html += '<tr>';
+                html += '<td>' + expense.date + '</td>';
+                html += '<td>' + expense.description + '</td>';
+                html += '<td>' + expense.category + '</td>';
+                html += '<td>Ksh ' + expense.amount.toLocaleString() + '</td>';
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            html += '</div>';
+            
+            output.innerHTML = html;
+        }
+
+        function showTaxReport() {
+            currentReportType = 'tax';
+            var output = document.getElementById('reportOutput');
+            var html = '<h3>Tax Report - Withholding Tax Summary</h3>';
+            
+            var totalTax = appData.commissions.reduce((sum, c) => sum + c.taxAmount, 0);
+            var totalGrossCommission = appData.commissions.reduce((sum, c) => sum + c.grossCommission, 0);
+            var totalNetCommission = appData.commissions.reduce((sum, c) => sum + c.netCommission, 0);
+            
+            html += '<div class="grid-3">';
+            html += '<div class="card">';
+            html += '<h4>Total Tax Withheld</h4>';
+            html += '<p style="font-size: 24px; color: #8e44ad;">Ksh ' + totalTax.toLocaleString() + '</p>';
+            html += '<p>10% withholding tax</p>';
+            html += '</div>';
+            
+            html += '<div class="card">';
+            html += '<h4>Taxable Amount</h4>';
+            html += '<p style="font-size: 24px;">Ksh ' + totalGrossCommission.toLocaleString() + '</p>';
+            html += '<p>Gross commission</p>';
+            html += '</div>';
+            
+            html += '<div class="card">';
+            html += '<h4>Effective Tax Rate</h4>';
+            html += '<p style="font-size: 24px;">10%</p>';
+            html += '<p>Fixed withholding rate</p>';
+            html += '</div>';
+            html += '</div>';
+            
+            // Monthly tax breakdown
+            html += '<div class="card">';
+            html += '<h4>Monthly Tax Breakdown</h4>';
+            
+            var monthlyTax = {};
+            appData.commissions.forEach(function(commission) {
+                var monthYear = commission.date.substring(0, 7); // YYYY-MM
+                if (!monthlyTax[monthYear]) {
+                    monthlyTax[monthYear] = {
+                        gross: 0,
+                        tax: 0,
+                        net: 0
+                    };
+                }
+                monthlyTax[monthYear].gross += commission.grossCommission;
+                monthlyTax[monthYear].tax += commission.taxAmount;
+                monthlyTax[monthYear].net += commission.netCommission;
+            });
+            
+            html += '<table><thead><tr><th>Month</th><th>Gross Commission</th><th>Tax (10%)</th><th>Net Commission</th><th>Tax Percentage</th></tr></thead><tbody>';
+            
+            var months = Object.keys(monthlyTax).sort();
+            months.forEach(function(month) {
+                var monthName = getMonthName(parseInt(month.substring(5, 7)) - 1);
+                var year = month.substring(0, 4);
+                var taxPercentage = monthlyTax[month].gross > 0 ? (monthlyTax[month].tax / monthlyTax[month].gross * 100).toFixed(1) : 0;
+                
+                html += '<tr>';
+                html += '<td>' + monthName + ' ' + year + '</td>';
+                html += '<td>Ksh ' + monthlyTax[month].gross.toLocaleString() + '</td>';
+                html += '<td><span class="tax-badge">Ksh ' + monthlyTax[month].tax.toLocaleString() + '</span></td>';
+                html += '<td>Ksh ' + monthlyTax[month].net.toLocaleString() + '</td>';
+                html += '<td>' + taxPercentage + '%</td>';
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            html += '</div>';
+            
+            // Tax by client
+            html += '<div class="card">';
+            html += '<h4>Tax Contribution by Client (Top 10)</h4>';
+            
+            var taxByClient = {};
+            appData.commissions.forEach(function(commission) {
+                var client = appData.clients.find(c => c.id === commission.clientId);
+                var clientName = client ? client.name : 'Unknown';
+                if (!taxByClient[clientName]) {
+                    taxByClient[clientName] = 0;
+                }
+                taxByClient[clientName] += commission.taxAmount;
+            });
+            
+            html += '<table><thead><tr><th>Client</th><th>Tax Amount</th><th>Percentage of Total</th></tr></thead><tbody>';
+            
+            var sortedClients = Object.entries(taxByClient).sort((a, b) => b[1] - a[1]).slice(0, 10);
+            sortedClients.forEach(function([clientName, taxAmount]) {
+                var percentage = totalTax > 0 ? (taxAmount / totalTax * 100).toFixed(1) : 0;
+                html += '<tr>';
+                html += '<td>' + clientName + '</td>';
+                html += '<td>Ksh ' + taxAmount.toLocaleString() + '</td>';
+                html += '<td>' + percentage + '%</td>';
+                html += '</tr>';
+            });
+            
+            html += '</tbody></table>';
+            html += '</div>';
+            
+            output.innerHTML = html;
+        }
+
+        function getMonthName(monthIndex) {
+            var months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+            return months[monthIndex];
+        }
+
+        function getTodayCommissionsCount() {
+            var today = new Date().toISOString().split('T')[0];
+            return appData.commissions.filter(c => c.date === today).length;
+        }
+
+        // ===== ADMIN FUNCTIONS =====
+        function updateSystemInfo() {
+            document.getElementById('sysClients').textContent = appData.clients.length;
+            document.getElementById('sysCommissions').textContent = appData.commissions.length;
+            document.getElementById('sysProducts').textContent = appData.products.length;
+            document.getElementById('sysExpenses').textContent = appData.expenses.length;
+        }
+
+        function saveSystemSettings() {
+            var commissionRate = document.getElementById('defaultCommissionRate').value;
+            var taxRate = document.getElementById('defaultTaxRate').value;
+            
+            appData.settings.commissionRate = parseFloat(commissionRate);
+            appData.settings.taxRate = parseFloat(taxRate);
+            saveData();
+            alert('System settings saved successfully!');
+        }
+
+        // ===== DATA MANAGEMENT =====
+        function saveData() {
+            localStorage.setItem('bowman_insurance_data', JSON.stringify(appData));
+            document.getElementById('lastBackup').textContent = new Date().toLocaleString();
+        }
+
+        function loadData() {
+            var saved = localStorage.getItem('bowman_insurance_data');
+            if (saved) {
+                try {
+                    appData = JSON.parse(saved);
+                    // Ensure settings exist
+                    if (!appData.settings) {
+                        appData.settings = {
+                            commissionRate: 10,
+                            taxRate: 10
+                        };
+                    }
+                    // Ensure users array exists
+                    if (!appData.users) {
+                        appData.users = [{username: "admin", password: "bowman2025", role: "admin"}];
+                    }
+                } catch (e) {
+                    console.log('Starting with fresh data');
+                }
+            }
+        }
+
+        function exportData() {
+            var dataStr = JSON.stringify(appData, null, 2);
+            var blob = new Blob([dataStr], {type: 'application/json'});
+            var url = URL.createObjectURL(blob);
+            var link = document.createElement('a');
+            link.href = url;
+            link.download = 'bowman_insurance_backup_' + new Date().toISOString().slice(0,10) + '.json';
+            link.click();
+            alert('Data exported successfully!');
+        }
+
+        function importData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            
+            input.onchange = function(event) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    try {
+                        const importedData = JSON.parse(e.target.result);
+                        
+                        if (confirm('This will replace ALL current data. Are you sure?')) {
+                            appData = importedData;
+                            saveData();
+                            initializeApp();
+                            alert('Data imported successfully!');
+                        }
+                    } catch (error) {
+                        alert('Error reading file: ' + error.message);
+                    }
+                };
+                
+                reader.readAsText(file);
+            };
+            
+            input.click();
+        }
+
+        function clearAllData() {
+            if (!confirm('⚠ This will delete ALL data! Are you sure?')) return;
+            
+            appData = {
+                clients: [],
+                commissions: [],
+                products: [],
+                expenses: [],
+                users: [{username: "admin", password: "bowman2025", role: "admin"}],
+                settings: {
+                    commissionRate: 10,
+                    taxRate: 10
+                }
+            };
+            saveData();
+            initializeApp();
+            alert('All data cleared successfully');
+        }
+
+        function addSampleData() {
+            // Add sample products
+            var sampleProducts = [
+                {name: "Third-Party Insurance", category: "third_party", subcategory: "Private Vehicles", commissionRate: 10},
+                {name: "Third-Party Insurance", category: "third_party", subcategory: "Commercial Vehicles", commissionRate: 12},
+                {name: "Third-Party Insurance", category: "third_party", subcategory: "PSV Vehicles", commissionRate: 15},
+                {name: "Third-Party Insurance", category: "third_party", subcategory: "PSV Uber Vehicles", commissionRate: 12},
+                {name: "Third-Party Insurance", category: "third_party", subcategory: "PSV TukTuk Vehicles", commissionRate: 10},
+                {name: "Comprehensive Insurance", category: "comprehensive", subcategory: "Private Vehicles", commissionRate: 15},
+                {name: "Comprehensive Insurance", category: "comprehensive", subcategory: "Commercial Vehicles", commissionRate: 18},
+                {name: "Time On Risk (TOR)", category: "tor", subcategory: "All Vehicles", commissionRate: 20}
+            ];
+            
+            sampleProducts.forEach(function(product, index) {
+                appData.products.push({
+                    id: Date.now() + index,
+                    name: product.name,
+                    category: product.category,
+                    subcategory: product.subcategory,
+                    commissionRate: product.commissionRate,
+                    description: product.name + " for " + product.subcategory,
+                    createdDate: new Date().toISOString().split('T')[0]
+                });
+            });
+            
+            // Add sample clients
+            var sampleClients = [
+                {name: "John Kamau", phone: "0712345678", email: "john@example.com", type: "new"},
+                {name: "Jane Wanjiku", phone: "0723456789", email: "jane@example.com", type: "renewal"},
+                {name: "Peter Mwangi", phone: "0734567890", email: "peter@example.com", type: "new"},
+                {name: "Mary Njeri", phone: "0745678901", email: "mary@example.com", type: "renewal"}
+            ];
+            
+            sampleClients.forEach(function(client, index) {
+                appData.clients.push({
+                    id: Date.now() + 100 + index,
+                    name: client.name,
+                    phone: client.phone,
+                    email: client.email,
+                    type: client.type,
+                    joinDate: new Date().toISOString().split('T')[0],
+                    policies: []
+                });
+            });
+            
+            // Add sample commissions
+            var today = new Date().toISOString().split('T')[0];
+            var yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+            
+            appData.commissions.push({
+                id: Date.now() + 200,
+                clientId: appData.clients[0].id,
+                productId: appData.products[0].id,
+                premiumReceived: 50000,
+                premiumPaid: 45000,
+                grossCommission: 5000,
+                taxAmount: 500,
+                netCommission: 4500,
+                date: today,
+                notes: "Toyota Premio - KCN 123A"
+            });
+            
+            appData.commissions.push({
+                id: Date.now() + 201,
+                clientId: appData.clients[1].id,
+                productId: appData.products[5].id,
+                premiumReceived: 120000,
+                premiumPaid: 102000,
+                grossCommission: 18000,
+                taxAmount: 1800,
+                netCommission: 16200,
+                date: yesterday,
+                notes: "Mercedes Benz - KDB 456B"
+            });
+            
+            // Add sample expenses
+            appData.expenses.push({
+                id: Date.now() + 300,
+                date: today,
+                description: "Office Rent",
+                category: "office",
+                amount: 15000,
+                notes: "Monthly office rent"
+            });
+            
+            appData.expenses.push({
+                id: Date.now() + 301,
+                date: yesterday,
+                description: "Marketing Materials",
+                category: "marketing",
+                amount: 5000,
+                notes: "Brochures and business cards"
+            });
+            
+            saveData();
+            refreshClients();
+            refreshCommissions();
+            refreshProducts();
+            refreshExpenses();
+            updateDashboard();
+            updateSystemInfo();
+            
+            alert('Sample data added successfully!');
+        }
+
+        // ===== HELPER FUNCTIONS =====
+        function filterClients() {
+            var searchTerm = document.getElementById('clientSearch').value.toLowerCase();
+            var rows = document.getElementById('clientsList').getElementsByTagName('tr');
+            
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var cells = row.getElementsByTagName('td');
+                var match = false;
+                
+                for (var j = 0; j < cells.length; j++) {
+                    var cellText = cells[j].textContent || cells[j].innerText;
+                    if (cellText.toLowerCase().indexOf(searchTerm) > -1) {
+                        match = true;
+                        break;
+                    }
+                }
+                
+                if (match) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        }
+
+        function filterCommissions() {
+            var searchTerm = document.getElementById('commissionSearch').value.toLowerCase();
+            var rows = document.getElementById('commissionsList').getElementsByTagName('tr');
+            
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var cells = row.getElementsByTagName('td');
+                var match = false;
+                
+                for (var j = 0; j < cells.length; j++) {
+                    var cellText = cells[j].textContent || cells[j].innerText;
+                    if (cellText.toLowerCase().indexOf(searchTerm) > -1) {
+                        match = true;
+                        break;
+                    }
+                }
+                
+                if (match) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        }
+
+        function filterProducts() {
+            var searchTerm = document.getElementById('productSearch').value.toLowerCase();
+            var rows = document.getElementById('productsList').getElementsByTagName('tr');
+            
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var cells = row.getElementsByTagName('td');
+                var match = false;
+                
+                for (var j = 0; j < cells.length; j++) {
+                    var cellText = cells[j].textContent || cells[j].innerText;
+                    if (cellText.toLowerCase().indexOf(searchTerm) > -1) {
+                        match = true;
+                        break;
+                    }
+                }
+                
+                if (match) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        }
+
+        function filterExpenses() {
+            var searchTerm = document.getElementById('expenseSearch').value.toLowerCase();
+            var rows = document.getElementById('expensesList').getElementsByTagName('tr');
+            
+            for (var i = 0; i < rows.length; i++) {
+                var row = rows[i];
+                var cells = row.getElementsByTagName('td');
+                var match = false;
+                
+                for (var j = 0; j < cells.length; j++) {
+                    var cellText = cells[j].textContent || cells[j].innerText;
+                    if (cellText.toLowerCase().indexOf(searchTerm) > -1) {
+                        match = true;
+                        break;
+                    }
+                }
+                
+                if (match) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            }
+        }
+
+        // ===== AUTO-LOAD SAMPLE DATA FOR NEW DEVICES =====
+        function checkFirstTimeLoad() {
+            const hasData = localStorage.getItem('bowman_insurance_data');
+            const firstTimeKey = 'bowman_first_time';
+            const isFirstTime = !localStorage.getItem(firstTimeKey);
+            
+            if (!hasData && isFirstTime) {
+                if (confirm('Welcome to Bowman Insurance Agency Commission Manager! Would you like to load sample data to get started?')) {
+                    addSampleData();
+                }
+                localStorage.setItem(firstTimeKey, 'false');
+            }
+        }
+
+        // Initialize when page loads
+        document.getElementById('commissionDate').valueAsDate = new Date();
+        document.getElementById('expenseDate').valueAsDate = new Date();
+    </script>
+</body>
+</html>
+```
